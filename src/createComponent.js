@@ -2,6 +2,12 @@ import React from 'react';
 
 export default function createComponent(fn) {
   class AsyncIterator extends React.Component {
+    static displayName = `AsyncIterator(${fn.name || 'fn'})`;
+
+    static defaultProps = {
+      onYield() {},
+    };
+
     componentWillMount() {
       this.setState({
         error: undefined,
@@ -15,17 +21,32 @@ export default function createComponent(fn) {
         mounted = false;
       };
 
-      const iterable = fn(this.props);
-      const iterator = iterable[Symbol.asyncIterator]();
+      const initialProps = this.props;
+      const iterable = fn(initialProps);
+      const isAsyncIterator = !!iterable[Symbol.asyncIterator];
+      const iterator = isAsyncIterator
+        ? iterable[Symbol.asyncIterator]()
+        : iterable[Symbol.iterator]();
 
-      const promise = (function iterate(value) {
-        return iterator.next(value).then(function(result) {
-          if (!mounted || result.done) return undefined;
-          return iterate(result.value);
+      // can replace with for-await-of syntax eventually
+      (function iterate() {
+        let promise = Promise.resolve(iterator.next());
+
+        if (!isAsyncIterator) {
+          promise = promise
+            .then(result => Promise.all([result.value, result.done]))
+            .then(([value, done]) => ({ value, done }));
+        }
+
+        return promise.then(result => {
+          if (!mounted || result.done) return;
+          initialProps.onYield(result.value);
+          return iterate();
         });
-      })();
-
-      promise.catch(error => mounted && this.setState({ error }));
+      })().catch(error => {
+        if (!mounted) return;
+        this.setState({ error });
+      });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -37,8 +58,6 @@ export default function createComponent(fn) {
       return null;
     }
   }
-
-  AsyncIterator.displayName = `AsyncIterator(${fn.name || 'fn'})`;
 
   return AsyncIterator;
 }

@@ -8,5 +8,5 @@ module.exports = {
     ],
     'react',
   ],
-  plugins: ['transform-async-generator-functions'],
+  plugins: ['transform-async-generator-functions', 'transform-class-properties'],
 };
