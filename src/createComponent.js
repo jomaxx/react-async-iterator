@@ -34,8 +34,8 @@ export default function createComponent(fn) {
 
         if (!isAsyncIterator) {
           promise = promise
-            .then(result => Promise.all([result.value, result.done]))
-            .then(([value, done]) => ({ value, done }));
+            .then(result => Promise.all([result.value, result]))
+            .then(([value, { done }]) => ({ value, done }));
         }
 
         return promise.then(result => {
