@@ -1,6 +1,6 @@
 {
   "name": "react-async-iterator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Iterate over an async iterable while component is mounted.",
   "main": "lib/index.js",
   "module": "lib/module.js",
@@ -21,17 +21,26 @@
     "url": "https://github.com/jomaxx/react-async-iterator/issues"
   },
   "homepage": "https://github.com/jomaxx/react-async-iterator#readme",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "babel": {
-    "presets": ["./config/babel.js"]
+    "presets": [
+      "./config/babel.js"
+    ]
   },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.{js,md,json}": ["prettier --write", "git add"],
-    "yarn.lock": ["git rm --cached"]
+    "*.{js,md,json}": [
+      "prettier --write",
+      "git add"
+    ],
+    "yarn.lock": [
+      "git rm --cached"
+    ]
   },
   "peerDependencies": {
     "react": "16.x"
