@@ -62,7 +62,9 @@ export default createComponent(function searchArtists(initialProps) {
     async next() {
       switch (i++) {
         case 0: {
-          const response = await fetch(`/v1/search?q=${initialProps.q}&type=artist`);
+          const response = await fetch(
+            `/v1/search?q=${initialProps.q}&type=artist`,
+          );
           const results = await response.json();
           const value = { artists: results.artists.items };
 
@@ -145,7 +147,7 @@ class App extends Component {
 
         {this.state.artists.map(item => <div key={item.id}>{item.name}</div>)}
 
-        <LoadSearch
+        <SearchArtists
           q={this.state.q}
           onYield={state => this.setState(state)}
           key={this.state.q}
